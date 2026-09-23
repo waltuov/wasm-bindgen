@@ -12,7 +12,8 @@
 * Added an Emscripten Target page to the guide covering the
   `wasm32-unknown-emscripten` build flow, including the experimental
   `#[wasm_bindgen(experimental_tokio)]` attribute for driving an exported
-  async function on a Tokio event-loop runtime there.
+  async function on a Tokio event-loop runtime there, gated behind
+  `--cfg wasm_bindgen_unstable_tokio`.
   [#5334](https://github.com/wasm-bindgen/wasm-bindgen/pull/5334)
 
 ### Changed

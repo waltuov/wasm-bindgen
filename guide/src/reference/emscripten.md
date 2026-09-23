@@ -181,14 +181,13 @@ pub async fn fetch(req: Request) -> Response {
 }
 ```
 
-Until the Tokio support lands upstream ([tokio#8484], with [mio#1969] for
-the reactor), enable the `tokio` feature of `wasm-bindgen-futures`, build
-with `--cfg tokio_unstable`, and patch both crates to the PR branches:
+The support is unstable and gated behind `--cfg wasm_bindgen_unstable_tokio`.
+Until the Tokio side lands upstream ([tokio#8484], with [mio#1969] for the
+reactor), it also requires patching both crates to the PR branches and
+Tokio's own `--cfg tokio_unstable`:
 
 ```toml
-[dependencies]
-wasm-bindgen-futures = { version = "0.4", features = ["tokio"] }
-
+# Cargo.toml
 [patch.crates-io]
 mio = { git = "https://github.com/guybedford/mio", branch = "emscripten" }
 tokio = { git = "https://github.com/guybedford/tokio", branch = "emscripten-event-loop-host" }
@@ -197,10 +196,12 @@ tokio = { git = "https://github.com/guybedford/tokio", branch = "emscripten-even
 ```toml
 # .cargo/config.toml
 [target.wasm32-unknown-emscripten]
-rustflags = ["--cfg=tokio_unstable", ...]
+rustflags = ["--cfg=wasm_bindgen_unstable_tokio", "--cfg=tokio_unstable", ...]
 ```
 
-The attribute is a compile error on any other target.
+The cfg makes `wasm-bindgen-futures` depend on Tokio and expose the runtime
+glue; without it nothing Tokio-related is compiled or linked, and the
+attribute is a compile error (as it is on any other target).
 
 [tokio#8484]: https://github.com/tokio-rs/tokio/pull/8484
 [mio#1969]: https://github.com/tokio-rs/mio/pull/1969

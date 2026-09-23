@@ -64,9 +64,8 @@ wasm-bindgen-futures = { path = 'crates/futures' }
 wasm-bindgen-test-crate-a = { path = 'tests/crates/a' }
 wasm-bindgen-test-crate-b = { path = 'tests/crates/b' }
 
-[target.'cfg(target_os = "emscripten")'.dev-dependencies]
+[target.'cfg(all(target_os = "emscripten", wasm_bindgen_unstable_tokio))'.dev-dependencies]
 tokio = { version = "1", default-features = false, features = ["rt", "time", "sync"] }
-wasm-bindgen-futures = { path = 'crates/futures', features = ["tokio"] }
 
 [target.'cfg(target_arch = "wasm64")'.dev-dependencies]
 js-sys = { path = 'crates/js-sys', features = ["unsafe-eval"] }
@@ -86,6 +85,7 @@ unexpected_cfgs = { level = "warn", check-cfg = [
   'cfg(xxx_debug_only_print_generated_code)',
   'cfg(legacy_eh)',
   'cfg(tokio_unstable)',
+  'cfg(wasm_bindgen_unstable_tokio)',
 ] }
 unused_lifetimes = "warn"
 

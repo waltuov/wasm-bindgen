@@ -10,10 +10,24 @@ error: unknown tokio mode `shared`; expected `experimental_tokio` or `experiment
 6 | #[wasm_bindgen(experimental_tokio = "shared")]
   |                ^^^^^^^^^^^^^^^^^^
 
-error: `#[wasm_bindgen(experimental_tokio)]` is only supported on the `wasm32-unknown-emscripten` target
+error: `#[wasm_bindgen(experimental_tokio)]` is only supported on the `wasm32-unknown-emscripten` target with `--cfg wasm_bindgen_unstable_tokio`
   --> ui-tests/experimental-tokio.rs:10:1
    |
 10 | #[wasm_bindgen(experimental_tokio)]
    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: this error originates in the attribute macro `wasm_bindgen` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition name: `wasm_bindgen_unstable_tokio`
+  --> ui-tests/experimental-tokio.rs:10:1
+   |
+10 | #[wasm_bindgen(experimental_tokio)]
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: expected names are: `docsrs`, `feature`, and `test` and 31 more
+   = note: using a cfg inside a attribute macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `wasm_bindgen` crate for guidance on how handle this unexpected cfg
+   = help: the attribute macro `wasm_bindgen` may come from an old version of the `wasm_bindgen_macro` crate, try updating your dependency with `cargo update -p wasm_bindgen_macro`
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: `#[warn(unexpected_cfgs)]` on by default
+   = note: this warning originates in the attribute macro `wasm_bindgen` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -12,4 +12,5 @@ rustflags = [
   "-Clink-arg=-sERROR_ON_UNDEFINED_SYMBOLS=0",
   "-Crelocation-model=static",
   "--cfg=tokio_unstable",
+  "--cfg=wasm_bindgen_unstable_tokio",
 ]

@@ -1,11 +1,17 @@
 //! Tokio event loops for `#[wasm_bindgen(experimental_tokio)]` exports.
-//! Only available on the `wasm32-unknown-emscripten` target.
+//! Only available on the `wasm32-unknown-emscripten` target under
+//! `--cfg wasm_bindgen_unstable_tokio` (plus tokio's own `--cfg tokio_unstable`).
 //!
 //! By default all such exports share the thread's ambient event loop: one
 //! timer arm, one I/O driver, one keepalive count, and `tokio::spawn` from
 //! any of them lands on the same scheduler. With
 //! `experimental_tokio = "isolated"` each invocation instead owns a fresh
 //! event loop ([`schedule_isolated`]).
+
+#[cfg(not(tokio_unstable))]
+compile_error!("`wasm_bindgen_unstable_tokio` requires tokio's `--cfg tokio_unstable`");
+
+extern crate std;
 
 use core::future::Future;
 use std::cell::OnceCell;

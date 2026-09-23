@@ -1127,8 +1127,9 @@ impl TryToTokens for ast::Export {
                 // the thread's shared ambient runtime, or with
                 // `experimental_tokio = "isolated"` a fresh runtime owned by
                 // this invocation. `schedule` drives before returning when
-                // safe. The runtime only exists on emscripten, so fail
-                // clearly elsewhere rather than on the unresolved path.
+                // safe. The runtime only exists on emscripten under the
+                // unstable cfg, so fail clearly elsewhere rather than on the
+                // unresolved path.
                 let promise = if ast::use_js_sys_futures() {
                     quote! { #js_sys::Promise }
                 } else {
@@ -1150,7 +1151,7 @@ impl TryToTokens for ast::Export {
                                 #call
                             })
                         );
-                        #[cfg(target_os = "emscripten")]
+                        #[cfg(all(target_os = "emscripten", wasm_bindgen_unstable_tokio))]
                         let __wbg_promise: #wasm_bindgen::JsValue = #promise::new(&mut move |resolve, reject| {
                             let __wbg_fut = __wbg_fut
                                 .take()
@@ -1172,11 +1173,11 @@ impl TryToTokens for ast::Export {
                                 }
                             });
                         }).into();
-                        #[cfg(not(target_os = "emscripten"))]
+                        #[cfg(not(all(target_os = "emscripten", wasm_bindgen_unstable_tokio)))]
                         let __wbg_promise: #wasm_bindgen::JsValue = {
                             ::core::compile_error!(
                                 "`#[wasm_bindgen(experimental_tokio)]` is only supported on the \
-                                 `wasm32-unknown-emscripten` target"
+                                 `wasm32-unknown-emscripten` target with `--cfg wasm_bindgen_unstable_tokio`"
                             );
                             let _ = &mut __wbg_fut;
                             #wasm_bindgen::JsValue::UNDEFINED

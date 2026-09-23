@@ -60,6 +60,7 @@ async fn hello_test() {
 // Compiles the `experimental_tokio` attribute expansion: an async export
 // driven on the ambient event-loop runtime rather than the wasm-bindgen
 // executor.
+#[cfg(wasm_bindgen_unstable_tokio)]
 #[wasm_bindgen(experimental_tokio)]
 pub async fn tokio_sleep_ms(ms: u32) -> u32 {
     tokio::time::sleep(std::time::Duration::from_millis(ms as u64)).await;
@@ -71,6 +72,7 @@ pub async fn tokio_sleep_ms(ms: u32) -> u32 {
 // use timers, and one spawns a subtask. NOTE: the emscripten harness is
 // check-only today (it never instantiates the module), so this body is
 // compile coverage until the harness executes tests.
+#[cfg(wasm_bindgen_unstable_tokio)]
 #[wasm_bindgen_test]
 async fn tokio_ambient_runtime_is_shared() {
     use std::time::Duration;
