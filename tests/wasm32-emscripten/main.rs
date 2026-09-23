@@ -57,19 +57,20 @@ async fn hello_test() {
     hello().await;
 }
 
-// Compiles the `tokio` attribute expansion: an async export driven on the
-// ambient event-loop runtime rather than the wasm-bindgen executor.
-#[wasm_bindgen(tokio)]
+// Compiles the `experimental_tokio` attribute expansion: an async export
+// driven on the ambient event-loop runtime rather than the wasm-bindgen
+// executor.
+#[wasm_bindgen(experimental_tokio)]
 pub async fn tokio_sleep_ms(ms: u32) -> u32 {
     tokio::time::sleep(std::time::Duration::from_millis(ms as u64)).await;
     ms
 }
 
-// Two independently scheduled roots (as two `tokio` exports would be) must
-// land on one runtime: a oneshot crosses between them, both use timers, and
-// one spawns a subtask. NOTE: the emscripten harness is check-only today
-// (it never instantiates the module), so this body is compile coverage
-// until the harness executes tests.
+// Two independently scheduled roots (as two `experimental_tokio` exports
+// would be) must land on one runtime: a oneshot crosses between them, both
+// use timers, and one spawns a subtask. NOTE: the emscripten harness is
+// check-only today (it never instantiates the module), so this body is
+// compile coverage until the harness executes tests.
 #[wasm_bindgen_test]
 async fn tokio_ambient_runtime_is_shared() {
     use std::time::Duration;

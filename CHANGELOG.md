@@ -9,6 +9,19 @@
   matching the WebGPU specification.
   [#5335](https://github.com/wasm-bindgen/wasm-bindgen/pull/5335)
 
+* Added `#[wasm_bindgen(experimental_tokio)]` for the `wasm32-unknown-emscripten`
+  target: an async export marked with it is driven as a root on Tokio's
+  event-loop runtime instead of the `wasm-bindgen-futures` executor, so
+  `tokio::spawn`, timers and I/O work inside the export without JSPI.
+  `experimental_tokio = "isolated"` gives each invocation its own runtime.
+  Requires the `tokio` feature of `wasm-bindgen-futures` and
+  `--cfg tokio_unstable`.
+  [#5334](https://github.com/wasm-bindgen/wasm-bindgen/pull/5334)
+
+* Added an Emscripten Target page to the guide covering the
+  `wasm32-unknown-emscripten` build flow.
+  [#5334](https://github.com/wasm-bindgen/wasm-bindgen/pull/5334)
+
 ### Changed
 
 * Library MSRV bumped from 1.77 to 1.81, per the 2-year MSRV policy.
@@ -19,6 +32,11 @@
 * The blanket `From<E: Error> for JsError` impl is now available without the
   `std` feature, using `core::error::Error`, so `?` works in `no_std` crates.
   [#5029](https://github.com/wasm-bindgen/wasm-bindgen/pull/5029)
+
+* Emscripten output for `js_namespace = ["default"]` now emits the ES default
+  export (`export { $default as default }`) instead of a named `_default`
+  export, which module-worker hosts require.
+  [#5334](https://github.com/wasm-bindgen/wasm-bindgen/pull/5334)
 
 * Emscripten output no longer emits the instance reinit machinery, which
   Emscripten's JS compiler rejected (unescaped multi-line `__postset`, and

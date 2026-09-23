@@ -111,7 +111,7 @@ macro_rules! attrgen {
             (fallback, false, Fallback(Span)),
             (main, false, Main(Span)),
             (start, false, Start(Span)),
-            (tokio, false, Tokio(Span, Option<String>)),
+            (experimental_tokio, false, ExperimentalTokio(Span, Option<String>)),
             (wasm_bindgen, false, WasmBindgen(Span, syn::Path)),
             (js_sys, false, JsSys(Span, syn::Path)),
             (wasm_bindgen_futures, false, WasmBindgenFutures(Span, syn::Path)),
@@ -1725,20 +1725,20 @@ fn function_from_decl(
             r#unsafe: matches!(sig.safety, syn::Safety::Unsafe(_)),
             r#async: sig.asyncness.is_some(),
             jspi: opts.jspi().is_some(),
-            tokio: match opts.tokio() {
+            tokio: match opts.experimental_tokio() {
                 Some(mode) => {
                     let span = opts
                         .attrs
                         .iter()
                         .find_map(|(_, attr)| match attr {
-                            BindgenAttr::Tokio(span, _) => Some(*span),
+                            BindgenAttr::ExperimentalTokio(span, _) => Some(*span),
                             _ => None,
                         })
                         .unwrap();
                     if sig.asyncness.is_none() {
                         return Err(Diagnostic::span_error(
                             span,
-                            "#[wasm_bindgen(tokio)] can only be applied to `async` functions",
+                            "#[wasm_bindgen(experimental_tokio)] can only be applied to `async` functions",
                         ));
                     }
                     match mode.as_deref() {
@@ -1748,7 +1748,7 @@ fn function_from_decl(
                             return Err(Diagnostic::span_error(
                                 span,
                                 format!(
-                                    "unknown tokio mode `{other}`; expected `tokio` or `tokio = \"isolated\"`"
+                                    "unknown tokio mode `{other}`; expected `experimental_tokio` or `experimental_tokio = \"isolated\"`"
                                 ),
                             ))
                         }

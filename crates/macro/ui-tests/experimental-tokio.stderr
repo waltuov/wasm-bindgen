@@ -1,0 +1,19 @@
+error: #[wasm_bindgen(experimental_tokio)] can only be applied to `async` functions
+ --> ui-tests/experimental-tokio.rs:3:16
+  |
+3 | #[wasm_bindgen(experimental_tokio)]
+  |                ^^^^^^^^^^^^^^^^^^
+
+error: unknown tokio mode `shared`; expected `experimental_tokio` or `experimental_tokio = "isolated"`
+ --> ui-tests/experimental-tokio.rs:6:16
+  |
+6 | #[wasm_bindgen(experimental_tokio = "shared")]
+  |                ^^^^^^^^^^^^^^^^^^
+
+error: `#[wasm_bindgen(experimental_tokio)]` is only supported on the `wasm32-unknown-emscripten` target
+  --> ui-tests/experimental-tokio.rs:10:1
+   |
+10 | #[wasm_bindgen(experimental_tokio)]
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the attribute macro `wasm_bindgen` (in Nightly builds, run with -Z macro-backtrace for more info)

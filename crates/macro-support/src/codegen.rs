@@ -1125,8 +1125,10 @@ impl TryToTokens for ast::Export {
                 // runtime (so `tokio::spawn`, timers, and IO inside it
                 // work), bridging its outcome to the returned `Promise`:
                 // the thread's shared ambient runtime, or with
-                // `tokio = "isolated"` a fresh runtime owned by this
-                // invocation. `schedule` drives before returning when safe.
+                // `experimental_tokio = "isolated"` a fresh runtime owned by
+                // this invocation. `schedule` drives before returning when
+                // safe. The runtime only exists on emscripten, so fail
+                // clearly elsewhere rather than on the unresolved path.
                 let promise = if ast::use_js_sys_futures() {
                     quote! { #js_sys::Promise }
                 } else {
@@ -1148,7 +1150,8 @@ impl TryToTokens for ast::Export {
                                 #call
                             })
                         );
-                        #promise::new(&mut move |resolve, reject| {
+                        #[cfg(target_os = "emscripten")]
+                        let __wbg_promise: #wasm_bindgen::JsValue = #promise::new(&mut move |resolve, reject| {
                             let __wbg_fut = __wbg_fut
                                 .take()
                                 .expect("Promise executor invoked more than once");
@@ -1168,7 +1171,17 @@ impl TryToTokens for ast::Export {
                                     }
                                 }
                             });
-                        }).into()
+                        }).into();
+                        #[cfg(not(target_os = "emscripten"))]
+                        let __wbg_promise: #wasm_bindgen::JsValue = {
+                            ::core::compile_error!(
+                                "`#[wasm_bindgen(experimental_tokio)]` is only supported on the \
+                                 `wasm32-unknown-emscripten` target"
+                            );
+                            let _ = &mut __wbg_fut;
+                            #wasm_bindgen::JsValue::UNDEFINED
+                        };
+                        __wbg_promise
                     }
                 }
             } else {

@@ -1,9 +1,11 @@
-//! Tokio event loops for `#[wasm_bindgen(tokio)]` exports.
+//! Tokio event loops for `#[wasm_bindgen(experimental_tokio)]` exports.
+//! Only available on the `wasm32-unknown-emscripten` target.
 //!
 //! By default all such exports share the thread's ambient event loop: one
 //! timer arm, one I/O driver, one keepalive count, and `tokio::spawn` from
-//! any of them lands on the same scheduler. With `tokio = "isolated"` each
-//! invocation instead owns a fresh event loop ([`schedule_isolated`]).
+//! any of them lands on the same scheduler. With
+//! `experimental_tokio = "isolated"` each invocation instead owns a fresh
+//! event loop ([`schedule_isolated`]).
 
 use core::future::Future;
 use std::cell::OnceCell;

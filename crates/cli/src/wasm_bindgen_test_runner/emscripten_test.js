@@ -83,7 +83,7 @@
             if (typeof Module.Interval !== 'string' || !Module.Interval.startsWith('=class ')) {
                 return { status: false, e: 'test result: Interval is not a class value snippet' };
             }
-            // `tokio_sleep_ms` is a `#[wasm_bindgen(tokio)]` export: its
+            // `tokio_sleep_ms` is a `#[wasm_bindgen(experimental_tokio)]` export: its
             // presence checks the tokio-attribute expansion survived the
             // full CLI pipeline into the emscripten glue.
             if (typeof Module.tokio_sleep_ms !== 'function') {

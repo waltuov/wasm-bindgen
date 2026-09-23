@@ -49,6 +49,7 @@
   - [Optimizing for Size](./reference/optimize-size.md)
   - [Debug information](./reference/debug-info.md)
   - [Supported Rust Targets](./reference/rust-targets.md)
+  - [Emscripten Target](./reference/emscripten.md)
   - [Supported Browsers](./reference/browser-support.md)
   - [Support for Weak References](./reference/weak-references.md)
   - [Support for Reference Types](./reference/reference-types.md)
@@ -116,6 +117,7 @@
       - [`unchecked_return_type`, `unchecked_param_type`, and `unchecked_optional_param_type`](./reference/attributes/on-rust-exports/unchecked_type.md)
       - [`return_description` and `param_description`](./reference/attributes/on-rust-exports/description.md)
       - [`extends = Parent`](./reference/attributes/on-rust-exports/extends.md)
+      - [`experimental_tokio`](./reference/attributes/on-rust-exports/experimental_tokio.md)
 
 - [`web-sys`](./web-sys/index.md)
   - [Using `web-sys`](./web-sys/using-web-sys.md)
