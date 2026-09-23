@@ -9,17 +9,10 @@
   matching the WebGPU specification.
   [#5335](https://github.com/wasm-bindgen/wasm-bindgen/pull/5335)
 
-* Added `#[wasm_bindgen(experimental_tokio)]` for the `wasm32-unknown-emscripten`
-  target: an async export marked with it is driven as a root on Tokio's
-  event-loop runtime instead of the `wasm-bindgen-futures` executor, so
-  `tokio::spawn`, timers and I/O work inside the export without JSPI.
-  `experimental_tokio = "isolated"` gives each invocation its own runtime.
-  Requires the `tokio` feature of `wasm-bindgen-futures` and
-  `--cfg tokio_unstable`.
-  [#5334](https://github.com/wasm-bindgen/wasm-bindgen/pull/5334)
-
 * Added an Emscripten Target page to the guide covering the
-  `wasm32-unknown-emscripten` build flow.
+  `wasm32-unknown-emscripten` build flow, including the experimental
+  `#[wasm_bindgen(experimental_tokio)]` attribute for driving an exported
+  async function on a Tokio event-loop runtime there.
   [#5334](https://github.com/wasm-bindgen/wasm-bindgen/pull/5334)
 
 ### Changed

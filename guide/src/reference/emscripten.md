@@ -17,8 +17,8 @@ You generally want Emscripten when:
 - You need `HashMap` with its default random state, or `getentropy`-backed
   randomness.
 - You are linking Rust against C/C++ sources.
-- You need a Tokio runtime inside an exported async function, via
-  [`#[wasm_bindgen(experimental_tokio)]`](attributes/on-rust-exports/experimental_tokio.md).
+- You need a Tokio runtime inside an exported async function (see
+  [Tokio](#tokio) below).
 
 Otherwise `wasm32-unknown-unknown` stays the right default: it has the
 smallest runtime and the fastest cold start.
@@ -159,6 +159,51 @@ in the same module.
 flow — installing a matching `wasm-bindgen` CLI, injecting the `emcc`
 settings, and laying out `pkg/` — via `wasm-pack new --emscripten` and
 `wasm-pack build`. See its documentation for details.
+
+## Tokio
+
+> **Experimental.** This depends on Tokio's Emscripten event-loop support,
+> which has not yet shipped in a Tokio release, and is subject to change.
+
+An exported `async fn` marked `#[wasm_bindgen(experimental_tokio)]` is driven
+as a root on a Tokio event-loop runtime instead of the `wasm-bindgen-futures`
+executor, with its outcome bridged to the returned `Promise`. `tokio::spawn`,
+timers and Tokio I/O then work inside the export without JSPI. All such
+exports share the thread's ambient runtime; `experimental_tokio = "isolated"`
+gives each invocation its own runtime, torn down once the root future
+settles, for multiplexed hosts where one invocation's I/O must not cross
+into another's context.
+
+```rust
+#[wasm_bindgen(experimental_tokio)]
+pub async fn fetch(req: Request) -> Response {
+    // tokio::net, tokio::time, tokio::spawn are all usable here
+}
+```
+
+Until the Tokio support lands upstream ([tokio#8484], with [mio#1969] for
+the reactor), enable the `tokio` feature of `wasm-bindgen-futures`, build
+with `--cfg tokio_unstable`, and patch both crates to the PR branches:
+
+```toml
+[dependencies]
+wasm-bindgen-futures = { version = "0.4", features = ["tokio"] }
+
+[patch.crates-io]
+mio = { git = "https://github.com/guybedford/mio", branch = "emscripten" }
+tokio = { git = "https://github.com/guybedford/tokio", branch = "emscripten-event-loop-host" }
+```
+
+```toml
+# .cargo/config.toml
+[target.wasm32-unknown-emscripten]
+rustflags = ["--cfg=tokio_unstable", ...]
+```
+
+The attribute is a compile error on any other target.
+
+[tokio#8484]: https://github.com/tokio-rs/tokio/pull/8484
+[mio#1969]: https://github.com/tokio-rs/mio/pull/1969
 
 ## Limitations
 
